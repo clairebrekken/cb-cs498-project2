@@ -33,167 +33,69 @@
     </div>
 </header>
 
-
 <div class="container">
-    <h3>Scalable Vector Graphics</h3>
-    <p>Scalable Vector Graphics (SVG) can be rendered using markup similar to html.</p>
-    <p>This makes them ideal for rendering graphics based using D3. An SVG element is added to the document,
-    then the data is turned into image elements like circles, lines etc, with attributes like center position,
-    radius, fill color, and opacity.</p>
+    <h3>Data Driven Documents</h3>
+    <p>D3 allows document elements to be generated from data. Hence the name Data Driven Documents (D3).</p>
+    <p>In the example below, and array of json key-value pairs are rendered as headings and paragraphs. We append a div
+    for each data item, and then within that div we render a heading for the key and a paragraph for the value.</p>
 
     <div class="col-md-6">
         <div id="draw_here"></div>
-        <div id="buttons_here"></div>
     </div>
 
     <div class="col-md-6">
 <pre>
-    var w = 500;
-    var h = 200;
-
-    data1 = [50, 60, 70, 30, 20, 10];
-    data2 = [30, 80, 20, 40];
-    dataIndex = 1;
-    
-    var colors = d3.scale.category10();
+    data = [
+        {"key": "First Heading", "value":"First Paragraph"},
+        {"key": "Second Heading", "value":"Second Paragraph"},
+        {"key": "Third Heading", "value":"Third Paragraph"},
+        {"key": "Fourth Heading", "value":"Fourth Paragraph"},
+        {"key": "Fifth Heading", "value":"Fifth Paragraph"},
+    ];
 
     //Create SVG element
-    var svg = d3.select("#draw_here")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
+    var doc = d3.select("#draw_here");
 
-    svg.selectAll("circle")
-            .data(data1)
+    var doc_item = doc.selectAll("div")
+            .data(data)
             .enter()
-            .append("circle")
-            .attr("cx", function (d, i) {
-                return 75 + (i * 80);
-            })
-            .attr("cy", h / 2)
-            .attr("r", function (d, i) {
-                return d;
-            })
-            .attr("fill", function(d, i) {
-                return colors(i);
-            })
-            .attr("opacity", "0.5");
+            .append("div");
 
-    d3.select("#buttons_here").append("button")
-            .text("change data")
-            .on("click",function(){
-                if (dataIndex==1) {
-                    dataIndex=2;  
-                } else   {
-                    dataIndex=1;
-                }
-                var circle = svg.selectAll("circle")
-                    .data(eval("data"+dataIndex));
+    doc_item.append("h4").text(function (d) {
+                return d.key;
+            });
 
-                circle.exit().remove();//remove unneeded circles
-                    circle.enter().append("circle")
-                        .attr("r",0);//create any new circles needed
-
-                circle.transition()
-                        .duration(500)
-                        .attr("cx", function (d, i) {
-                            return 75 + (i * 80);
-                        })
-                        .attr("cy", h / 2)
-                        .attr("r", function (d, i) {
-                            return d;
-                        })
-                        .attr("fill", function(d, i) {
-                            return colors(i);
-                        });
-
-            });//end click function
+    doc_item.append("p").text(function (d) {
+        return d.value;
+    })
 </pre>
     </div>
 </div>
 
 <script>
-
-    var w = 500;
-    var h = 200;
-
-    data1 = [[0, 50], [1, 60], [2, 70], [3, 30], [4, 20], [5, 10]];
-    data2 = [[0, 30], [1, 80], [2, 20], [3, 40]];
-    selectedData = data1;
-
-    var colors = d3.scale.category10();
+    data = [
+        {"key": "First Heading", "value":"First Paragraph"},
+        {"key": "Second Heading", "value":"Second Paragraph"},
+        {"key": "Third Heading", "value":"Third Paragraph"},
+        {"key": "Fourth Heading", "value":"Fourth Paragraph"},
+        {"key": "Fifth Heading", "value":"Fifth Paragraph"},
+    ];
 
     //Create SVG element
-    var svg = d3.select("#draw_here")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
+    var doc = d3.select("#draw_here");
 
-    draw_circles();
+    var doc_item = doc.selectAll("div")
+            .data(data)
+            .enter()
+            .append("div");
 
-    d3.select("#buttons_here").append("button")
-        .text("change data")
-        .on("click",function(){
-            if (selectedData==data1) {
-                selectedData=data2;  
-            } else   {
-                selectedData=data1;
-            }
-            draw_circles();
-        });//end click function
+    doc_item.append("h4").text(function (d) {
+                return d.key;
+            });
 
-
-    d3.select("#buttons_here").append("button")
-        .text("shuffle data")
-        .on("click",function(){
-            selectedData = shuffle(selectedData);
-            draw_circles();
-        });//end click function
-
-
-    function shuffle(array) {
-        var currentIndex = array.length, temporaryValue, randomIndex;
-
-        // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
-
-            // Pick a remaining element...
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex -= 1;
-
-            // And swap it with the current element.
-            temporaryValue = array[currentIndex];
-            array[currentIndex] = array[randomIndex];
-            array[randomIndex] = temporaryValue;
-        }
-
-        return array;
-    }
-
-
-    function draw_circles() {
-        var circle = svg.selectAll("circle")
-                    .data(selectedData);
-
-                circle.exit().remove();//remove unneeded circles
-                circle.enter().append("circle")
-                    .attr("r",0);//create any new circles needed
-
-                circle.transition()
-                        .duration(500)
-                        .attr("cx", function (d, i) {
-                            return 75 + (i * 80);
-                        })
-                        .attr("cy", h / 2)
-                        .attr("r", function (d, i) {
-                            return d[1];
-                        })
-                        .attr("fill", function(d, i) {
-                            return colors(d[0]);
-                        })
-                        .attr("opacity", "0.5");
-;
-    }
+    doc_item.append("p").text(function (d) {
+        return d.value;
+    })
 </script>
 
 </body>
